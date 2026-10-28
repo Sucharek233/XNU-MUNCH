@@ -22,8 +22,8 @@ fi
 out=${1:?usage: munch-log-pull.sh [-s SERIAL] OUT.txt}
 command -v adb >/dev/null 2>&1 || { echo "Error: adb not found in PATH" >&2; exit 1; }
 
-dev=$($ADB shell 'for d in /dev/block/by-name/userdata /dev/block/bootdevice/by-name/userdata; do [ -e $d ] && readlink -f $d && break; done' 2>/dev/null | tr -d '\r')
-[ -n "$dev" ] || { echo "userdata block device not found on connected device" >&2; exit 1; }
+dev=$($ADB shell 'for d in /dev/block/by-name/ios_data /dev/block/bootdevice/by-name/ios_data; do [ -e $d ] && readlink -f $d && break; done' 2>/dev/null | tr -d '\r')
+[ -n "$dev" ] || { echo "ios_data block device not found on connected device" >&2; exit 1; }
 bytes=$($ADB shell blockdev --getsize64 "$dev" | tr -d '\r')
 skip=$((bytes / 4096 - 1025))
 $ADB exec-out "dd if=$dev bs=4096 skip=$skip count=1025 2>/dev/null" > "$out.bin"
